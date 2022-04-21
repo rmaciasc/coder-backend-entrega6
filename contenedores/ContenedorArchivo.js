@@ -1,8 +1,8 @@
-const { promises: fs } = require('fs');
+const fs = require('fs');
 
 class ContenedorArchivo {
   constructor(ruta) {
-    this.ruta = ruta;
+    this.filename = ruta;
   }
 
   async listar(id) {
@@ -54,6 +54,7 @@ class ContenedorArchivo {
     } catch (err) {
       console.log(`${this.filename} no fue encontrado, creando archivo...`);
       obj.id = 1;
+      obj.date = new Date().toLocaleString();
       await fs.promises.writeFile(this.filename, JSON.stringify([obj]));
       return obj.id;
     }
@@ -62,6 +63,7 @@ class ContenedorArchivo {
       // append new object to content
       const currentId = content.length;
       obj.id = currentId + 1;
+      obj.date = new Date().toLocaleString();
       content.push(obj);
       await fs.promises.writeFile(this.filename, JSON.stringify(content));
       console.log('Objeto guardado!!');
@@ -70,7 +72,14 @@ class ContenedorArchivo {
     }
   }
 
-  async actualizar(elem, id) {}
+  async actualizar(elem, id) {
+    id = parseInt(id);
+    const objectIndex = this.productos.findIndex((x) => x.id === id);
+    elem.id = id;
+    this.productos[objectIndex] = elem;
+
+    return this.productos[objectIndex];
+  }
 
   async borrar(id) {
     try {

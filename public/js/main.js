@@ -17,9 +17,8 @@ formAgregarProducto.addEventListener('submit', (e) => {
   document.getElementById('foto').value = '';
 });
 
-socket.on('productos', (productos) => {
-  console.log(productos);
-  const html = makeHtmlTable(productos);
+socket.on('productos', async (productos) => {
+  const html = await makeHtmlTable(productos);
   document.getElementById('productos').innerHTML = html;
 });
 
@@ -40,8 +39,38 @@ const inputMensaje = document.getElementById('inputMensaje');
 const btnEnviar = document.getElementById('btnEnviar');
 
 const formPublicarMensaje = document.getElementById('formPublicarMensaje');
-formPublicarMensaje.addEventListener('submit', (e) => {});
+formPublicarMensaje.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newMessage = {
+    mail: document.getElementById('inputUsername').value,
+    message: document.getElementById('inputMensaje').value,
+  };
 
-socket.on('mensajes', (mensajes) => {});
+  if (newMessage.message !== '') {
+    socket.emit('addMessage', newMessage);
+  }
+});
 
-function makeHtmlList(mensajes) {}
+socket.on('mensajes', async (mensajes) => {
+  const html = await makeHtmlList(mensajes);
+  document.getElementById('mensajes').innerHTML = html;
+});
+
+function makeHtmlList(mensajes) {
+  return fetch('plantillas/tabla-mensajes.hbs')
+    .then((respuesta) => respuesta.text())
+    .then((plantilla) => {
+      const template = Handlebars.compile(plantilla);
+      const html = template({ mensajes });
+      return html;
+    });
+}
+
+function check() {
+  if (inputUsername.value != '' && inputUsername.checkValidity()) {
+    btnEnviar.disabled = false;
+  } else {
+    btnEnviar.disabled = true;
+  }
+}
+inputUsername.addEventListener('input', check);

@@ -70,10 +70,11 @@
         <br />
 
         <input
-          type="text"
           id="inputUsername"
           class="form-control w-50 my-2 mr-2"
           placeholder="Ingresá tu email"
+          type="email"
+          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
         />
 
         <hr />
@@ -83,7 +84,6 @@
         <form id="formPublicarMensaje" class="form-inline" autocomplete="off">
           <div class="form-group">
             <input
-              disabled
               id="inputMensaje"
               type="text"
               class="form-control my-2 mr-2"
